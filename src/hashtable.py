@@ -84,7 +84,18 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        # hash key, to get index
+        key = self._hash_mod(key)
+
+        # retrieve value from hashtable
+        value = self.storage[key]
+
+        # check if value exists
+        if value is None:
+            return print('None')
+
+        # return retrieved value
+        return value
 
     def resize(self):
         '''
@@ -100,14 +111,14 @@ if __name__ == "__main__":
     ht = HashTable(2)
 
     ht.insert("line_1", "Tiny hash table")
-    # ht.insert("line_2", "Filled beyond capacity")
+    ht.insert("line_2", "Filled beyond capacity")
     # ht.insert("line_3", "Linked list saves the day!")
 
     # print("")
 
     # # Test storing beyond capacity
-    # print(ht.retrieve("line_1"))
-    # print(ht.retrieve("line_2"))
+    print(ht.retrieve("line_1"))
+    print(ht.retrieve("line_2"))
     # print(ht.retrieve("line_3"))
 
     # # Test resizing
