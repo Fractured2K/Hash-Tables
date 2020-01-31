@@ -51,12 +51,27 @@ class HashTable:
 
         Fill this in.
         '''
+        # created linked pair from value and reassign value to linked pair
+        value = LinkedPair(key, value)
 
         # hash key to get insertion index
         key = self._hash_mod(key)
 
-        # insert value into block
-        self.storage[key] = value
+        
+        # insert value into bucket
+        if self.storage[key] is None:
+            self.storage[key] = value
+            return
+
+        # loop through bucket till the tail is reached and insert the value
+        while self.storage[key].next is not None:
+            self.storage[key].next = self.storage[key].next
+
+            if self.storage[key].next is None:
+                 # insert value into bucket tail
+                self.storage[key] = value
+
+        
 
     def remove(self, key):
         '''
@@ -113,26 +128,26 @@ if __name__ == "__main__":
     ht = HashTable(2)
 
     ht.insert("line_1", "Tiny hash table")
-    # ht.insert("line_2", "Filled beyond capacity")
-    # ht.insert("line_3", "Linked list saves the day!")
-
-    # print("")
-
-    # # Test storing beyond capacity
-    print(ht.retrieve("line_1"))
-    print(ht.retrieve("line_2"))
-    print(ht.retrieve("line_3"))
-
-    # Test resizing
-    old_capacity = len(ht.storage)
-    ht.resize()
-    new_capacity = len(ht.storage)
-
-    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
-
-    # Test if data intact after resizing
-    print(ht.retrieve("line_1"))
-    print(ht.retrieve("line_2"))
-    print(ht.retrieve("line_3"))
+    ht.insert("line_2", "Filled beyond capacity")
+    ht.insert("line_3", "Linked list saves the day!")
 
     print("")
+
+    # Test storing beyond capacity
+    print(ht.retrieve("line_1"))
+    print(ht.retrieve("line_2"))
+    print(ht.retrieve("line_3"))
+
+    # # Test resizing
+    # old_capacity = len(ht.storage)
+    # ht.resize()
+    # new_capacity = len(ht.storage)
+
+    # print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+
+    # # Test if data intact after resizing
+    # print(ht.retrieve("line_1"))
+    # print(ht.retrieve("line_2"))
+    # print(ht.retrieve("line_3"))
+
+    # print("")
