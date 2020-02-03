@@ -51,27 +51,20 @@ class HashTable:
 
         Fill this in.
         '''
-        # created linked pair from value and reassign value to linked pair
-        value = LinkedPair(key, value)
 
         # hash key to get insertion index
-        key = self._hash_mod(key)
+        index = self._hash_mod(key)
 
-        
+        # created linked pair from key,value and reassign value to linked pair
+        value = LinkedPair(key, value)
+
         # insert value into bucket
-        if self.storage[key] is None:
-            self.storage[key] = value
-            return
+        if self.storage[index] is None:
+            self.storage[index] = value
+        else:
+            value.next = self.storage[index]
+            self.storage[index] = value
 
-        # loop through bucket till the tail is reached and insert the value
-        while self.storage[key].next is not None:
-            self.storage[key].next = self.storage[key].next
-
-            if self.storage[key].next is None:
-                 # insert value into bucket tail
-                self.storage[key] = value
-
-        
 
     def remove(self, key):
         '''
@@ -81,14 +74,12 @@ class HashTable:
 
         Fill this in.
         '''
-        # hash key to get removal index
-        key = self._hash_mod(key)
-
-        # retrieved value
-        value = self.storage[key]
-
-        if value is None:
-            print("Key not found")
+          # hash key to get retrieval index
+        index = self._hash_mod(key)
+      
+        # check if bucket is empty
+        if self.storage[index] is None:
+            return print("Key not found")
 
         # remove value from index
         self.storage[key] = None
@@ -102,17 +93,26 @@ class HashTable:
         Fill this in.
         '''
         # hash key to get retrieval index
-        key = self._hash_mod(key)
+        index = self._hash_mod(key)
 
-        # retrieve value from hashtable
-        value = self.storage[key]
+        # create bucket reference
+        bucket = self.storage[index]
 
-        # check if value exists
-        if value is None:
+        # check if bucket is empty
+        if bucket is None:
             return None
 
-        # return retrieved value
-        return value
+        while bucket:
+            # check if keys match
+            if bucket.key == key:
+                # return value
+                return bucket.value
+
+            # reassign current bucket
+            bucket = bucket.next
+        
+        # return none if key isn't found
+        return None
 
     def resize(self):
         '''
