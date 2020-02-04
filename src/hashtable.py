@@ -65,7 +65,6 @@ class HashTable:
             value.next = self.storage[index]
             self.storage[index] = value
 
-
     def remove(self, key):
         '''
         Remove the value stored with the given key.
@@ -74,15 +73,23 @@ class HashTable:
 
         Fill this in.
         '''
-          # hash key to get retrieval index
+        # hash key to get removal index
         index = self._hash_mod(key)
-      
+
         # check if bucket is empty
         if self.storage[index] is None:
-            return print("Key not found")
+            return None
 
-        # remove value from index
-        self.storage[key] = None
+        # store refrence to current pair
+        current_pair = self.storage[index]
+
+        # loop through all pairs in bucket
+        while current_pair:
+            # remove pair if key matches
+            if current_pair.key == key:
+                self.storage[index] = current_pair.next
+
+            current_pair = current_pair.next
 
     def retrieve(self, key):
         '''
@@ -110,7 +117,7 @@ class HashTable:
 
             # reassign current bucket
             bucket = bucket.next
-        
+
         # return none if key isn't found
         return None
 
@@ -125,11 +132,14 @@ class HashTable:
 
 
 if __name__ == "__main__":
-    ht = HashTable(2)
+    ht = HashTable(6)
 
     ht.insert("line_1", "Tiny hash table")
     ht.insert("line_2", "Filled beyond capacity")
     ht.insert("line_3", "Linked list saves the day!")
+    ht.insert("line_4", "Hello!")
+    ht.insert("line_5", "Goodbye :)")
+    ht.insert("line_6", "PYAH!!!!")
 
     print("")
 
@@ -137,6 +147,19 @@ if __name__ == "__main__":
     print(ht.retrieve("line_1"))
     print(ht.retrieve("line_2"))
     print(ht.retrieve("line_3"))
+    print(ht.retrieve("line_4"))
+    print(ht.retrieve("line_5"))
+    print(ht.retrieve("line_6"))
+
+    ht.remove("line_3")
+
+    print('----BREAK -----')
+    print(ht.retrieve("line_1"))
+    print(ht.retrieve("line_2"))
+    print(ht.retrieve("line_3"), "------DELETED")
+    print(ht.retrieve("line_4"))
+    print(ht.retrieve("line_5"))
+    print(ht.retrieve("line_6"))
 
     # # Test resizing
     # old_capacity = len(ht.storage)
