@@ -52,11 +52,18 @@ class HashTable:
         Fill this in.
         '''
 
-        # hash key to get insertion index
-        key = self._hash_mod(key)
+        # Hash key to get insertion index
+        index = self._hash_mod(key)
 
-        # insert value into block
-        self.storage[key] = value
+        # Created linked pair from key,value and reassign value to linked pair
+        value = LinkedPair(key, value)
+
+        # insert value into bucket
+        if self.storage[index] is None:
+            self.storage[index] = value
+        else:
+            value.next = self.storage[index]
+            self.storage[index] = value
 
     def remove(self, key):
         '''
@@ -66,17 +73,23 @@ class HashTable:
 
         Fill this in.
         '''
-        # hash key to get removal index
-        key = self._hash_mod(key)
+        # Hash key to get removal index
+        index = self._hash_mod(key)
 
-        # retrieved value
-        value = self.storage[key]
+        # Check if bucket is empty
+        if self.storage[index] is None:
+            return None
 
-        if value is None:
-            print("Key not found")
+        # Store refrence to current pair
+        current_pair = self.storage[index]
 
-        # remove value from index
-        self.storage[key] = None
+        # Loop through all pairs in bucket
+        while current_pair:
+            # Remove pair if key matches
+            if current_pair.key == key:
+                self.storage[index] = current_pair.next
+
+            current_pair = current_pair.next
 
     def retrieve(self, key):
         '''
@@ -86,18 +99,27 @@ class HashTable:
 
         Fill this in.
         '''
-        # hash key to get retrieval index
-        key = self._hash_mod(key)
+        # Hash key to get retrieval index
+        index = self._hash_mod(key)
 
-        # retrieve value from hashtable
-        value = self.storage[key]
+        # Create bucket reference
+        bucket = self.storage[index]
 
-        # check if value exists
-        if value is None:
+        # Check if bucket is empty
+        if bucket is None:
             return None
 
-        # return retrieved value
-        return value
+        while bucket:
+            # Check if keys match
+            if bucket.key == key:
+                # Return value
+                return bucket.value
+
+            # Reassign current bucket
+            bucket = bucket.next
+
+        # Return none if key isn't found
+        return None
 
     def resize(self):
         '''
@@ -106,19 +128,38 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+
+        # Create ref of original storage
+        temp_storage = self.storage
+
+        # Double capacity
+        self.capacity = self.capacity * 2
+
+        # Resize current storage
+        self.storage = [None] * self.capacity
+
+        # Copy pairs into new storage
+        for i in range(self.capacity // 2):
+            # Hash current value in bucket if there aren't any descendants
+            if temp_storage[i] and temp_storage[i].next is None:
+                self.insert(temp_storage[i].key, temp_storage[i].value)
+            else:
+                # Hash descendants in current bucket
+                while temp_storage[i]:
+                    self.insert(temp_storage[i].key, temp_storage[i].value)
+                    temp_storage[i] = temp_storage[i].next
 
 
 if __name__ == "__main__":
     ht = HashTable(2)
 
     ht.insert("line_1", "Tiny hash table")
-    # ht.insert("line_2", "Filled beyond capacity")
-    # ht.insert("line_3", "Linked list saves the day!")
+    ht.insert("line_2", "Filled beyond capacity")
+    ht.insert("line_3", "Linked list saves the day!")
 
-    # print("")
+    print("")
 
-    # # Test storing beyond capacity
+    # Test storing beyond capacity
     print(ht.retrieve("line_1"))
     print(ht.retrieve("line_2"))
     print(ht.retrieve("line_3"))
